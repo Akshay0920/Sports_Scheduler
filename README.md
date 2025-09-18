@@ -17,6 +17,8 @@ You can view the live, deployed application here: **[Sport Scheduler](https://sp
 - **Session Management:** The application uses sessions to keep users logged in.
 - **Password Visibility:** Users can toggle password visibility on all forms for a better UX.
 
+- ![Login Page Screenshot](Screenshots/login.png)
+
 ### Player Features
 - **Dashboard:** View a dynamic list of all available, upcoming sports sessions.
 - **My Sessions:** Dedicated pages to view sessions the user has joined and sessions they have created.

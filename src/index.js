@@ -225,28 +225,6 @@ app.post('/profile/change-password', isAuthenticated, async (req, res) => {
 });
 
 // --- SERVER LISTENER & MIGRATION SCRIPT ---
-// This block replaces the simple app.listen to handle migrations on deploy
-const startServer = () => {
-    app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
-    });
-};
-
-if (process.env.NODE_ENV === 'production') {
-    console.log('Running migrations in production environment...');
-    exec('npx sequelize-cli db:migrate --env production', (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Migration Error: ${error.message}`);
-            process.exit(1);
-        }
-        if (stderr) {
-            console.error(`Migration Stderr: ${stderr}`);
-        }
-        console.log(`Migration Stdout: ${stdout}`);
-        console.log('Migrations complete. Starting server...');
-        startServer();
-    });
-} else {
-    // In development, just start the server
-    startServer();
-}
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});

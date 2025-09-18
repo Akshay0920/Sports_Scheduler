@@ -1,9 +1,8 @@
-// src/index.js
-
 // --- IMPORTS ---
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const { exec } = require('child_process'); // For programmatic migrations
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -77,8 +76,6 @@ app.get('/sessions', isAuthenticated, async (req, res) => {
         res.render('sessions', { title: 'Available Sessions', sessions: [], error: 'Could not fetch sessions.' });
     }
 });
-
-// LOGIN, SIGNUP, LOGOUT ROUTES
 app.get('/login', redirectIfAuthenticated, (req, res) => {
     const successMessage = req.query.status === 'success' ? 'Signup successful! Please login.' : null;
     res.render('login', { title: 'Login', error: null, success: successMessage });
@@ -108,8 +105,6 @@ app.post('/signup', redirectIfAuthenticated, async (req, res) => {
 app.get('/logout', (req, res) => {
     req.session.destroy(() => { res.redirect('/login'); });
 });
-
-// SESSION MANAGEMENT ROUTES
 app.get('/sessions/new', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sports`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -156,8 +151,6 @@ app.post('/sessions/:id/join', isAuthenticated, async (req, res) => {
         res.redirect('/sessions');
     }
 });
-
-// USER-SPECIFIC SESSION ROUTES
 app.get('/my-sessions', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/me/joined`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -175,8 +168,6 @@ app.get('/my-created-sessions', isAuthenticated, async (req, res) => {
         res.render('my-created-sessions', { title: 'My Created Sessions', sessions: [], error: 'Could not fetch your created sessions.' });
     }
 });
-
-// ADMIN VIEW ROUTES
 app.get('/admin/create-sport', isAuthenticated, isAdminView, (req, res) => {
     res.render('create-sport', { title: 'Create Sport' });
 });
@@ -204,10 +195,6 @@ app.get('/admin/reports', isAuthenticated, isAdminView, async (req, res) => {
     }
     res.render('admin-reports', { title: 'Admin Reports', report: reportData });
 });
-
-// <-- DUPLICATED AND EMPTY /admin/reports ROUTE REMOVED FROM HERE -->
-
-// PROFILE ROUTES
 app.get('/profile', isAuthenticated, (req, res) => {
     res.render('profile', { title: 'My Profile' });
 });
@@ -237,7 +224,29 @@ app.post('/profile/change-password', isAuthenticated, async (req, res) => {
     }
 });
 
-// --- SERVER LISTENER ---
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// --- SERVER LISTENER & MIGRATION SCRIPT ---
+// This block replaces the simple app.listen to handle migrations on deploy
+const startServer = () => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+};
+
+if (process.env.NODE_ENV === 'production') {
+    console.log('Running migrations in production environment...');
+    exec('npx sequelize-cli db:migrate --env production', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Migration Error: ${error.message}`);
+            process.exit(1);
+        }
+        if (stderr) {
+            console.error(`Migration Stderr: ${stderr}`);
+        }
+        console.log(`Migration Stdout: ${stdout}`);
+        console.log('Migrations complete. Starting server...');
+        startServer();
+    });
+} else {
+    // In development, just start the server
+    startServer();
+}

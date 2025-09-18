@@ -1,0 +1,44 @@
+<div class="row justify-content-center fade-in">
+    <div class="col-md-8 col-lg-6">
+        <h1>Create a New Session</h1>
+        <p class="lead">Fill out the details below to schedule a new game.</p>
+        <hr>
+
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <form action="/sessions/new" method="POST">
+                    <div class="mb-3">
+                        <label for="sport_id" class="form-label">Sport</label>
+                        <select class="form-select" id="sport_id" name="sport_id" required>
+                            <option value="" disabled selected>Choose a sport...</option>
+                            <% if (typeof sports !=='undefined' && sports.length> 0) { %>
+                                <% sports.forEach(sport=> { %>
+                                    <option value="<%= sport.id %>">
+                                        <%= sport.name %>
+                                    </option>
+                                    <% }) %>
+                                        <% } %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="venue" class="form-label">Venue / Location</label>
+                        <input type="text" class="form-control" id="venue" name="venue" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="scheduled_at" class="form-label">Date and Time</label>
+                        <input type="datetime-local" class="form-control" id="scheduled_at" name="scheduled_at"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="players_needed" class="form-label">Total Players Needed</label>
+                        <input type="number" class="form-control" id="players_needed" name="players_needed" min="2"
+                            required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Session</button>
+                </form>
+    </div>
+</div>

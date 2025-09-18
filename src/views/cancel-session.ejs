@@ -1,0 +1,39 @@
+<div class="row justify-content-center fade-in">
+    <div class="col-md-8 col-lg-6">
+        <h1>Confirm Cancellation</h1>
+        <p class="lead">You are about to cancel the following session:</p>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <%= session.Sport.name %>
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">
+                    <%= session.venue %>
+                </h6>
+                <p class="card-text">
+                    <strong>Date:</strong>
+                    <%= new Date(session.scheduled_at).toLocaleDateString() %><br>
+                        <strong>Time:</strong>
+                        <%= new Date(session.scheduled_at).toLocaleTimeString([], {hour: '2-digit' , minute:'2-digit'})
+                            %>
+                </p>
+            </div>
+        </div>
+
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <form action="/sessions/<%= session.id %>/cancel" method="POST">
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Reason for Cancellation</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                    <a href="/sessions" class="btn btn-secondary">Go Back</a>
+                </form>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="row justify-content-center fade-in">
+    <div class="col-md-8 col-lg-6">
+        <h1>Create a New Sport</h1>
+        <p class="lead">Add a new sport to the list of available options for sessions.</p>
+        <hr>
+
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+            <% } %>
+                <% if (typeof success !=='undefined' && success) { %>
+                    <div class="alert alert-success">
+                        <%= success %>
+                    </div>
+                    <% } %>
+
+                        <form action="/admin/create-sport" method="POST">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Sport Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Sport</button>
+                        </form>
+    </div>
+</div>

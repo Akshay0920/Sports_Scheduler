@@ -1,0 +1,132 @@
+body {
+    background-color: #f8f9fa;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.main-content-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.btn-primary {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-primary:hover {
+    background-color: #157347;
+    border-color: #146c43;
+}
+
+
+body.auth-page-body {
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
+}
+
+.auth-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.auth-branding-panel {
+    flex: 0 0 45%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: rgb(0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    padding: 3rem;
+    text-align: left;
+}
+
+.auth-branding-panel .brand-logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    max-width: 150px;
+}
+
+.auth-branding-panel .brand-text {
+    margin-top: 4rem;
+
+}
+
+.auth-branding-panel .brand-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.auth-branding-panel .brand-text p {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+.auth-form-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+}
+
+.auth-form-container {
+    max-width: 420px;
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    padding: 2.5rem;
+    border: 1px solid #adb5bd;
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.auth-form-container h2 {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.auth-form-container .form-control {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.auth-form-container .btn-dark {
+    background-color: #212939;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+}
+
+
+
+.session-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.session-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #495057;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: -8px;
+    border: 2px solid rgb(255, 255, 255);
+}

@@ -1,0 +1,50 @@
+<div class="auth-layout">
+    <div class="auth-branding-panel">
+        <div class="brand-logo">
+            <img src="/images/sportime-scheduler-logo.png" alt="Sportime Scheduler Logo" class="img-fluid"
+                style="width: 150px;">
+        </div>
+        <div class="brand-text">
+            <h1>Welcome to, <br>Sport Scheduler!</h1>
+            <p>The best place to organize and join sports sessions with ease. Find a game near you or create your own.
+            </p>
+        </div>
+    </div>
+    <div class="auth-form-panel">
+        <div class="auth-form-container">
+            <h2>Welcome Back!</h2>
+            <% if (locals.error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+                <% } %>
+                    <% if (locals.success) { %>
+                        <div class="alert alert-success">
+                            <%= success %>
+                        </div>
+                        <% } %>
+
+                            <form action="/login" method="POST">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" name="password" required>
+                                        <button class="btn btn-outline-secondary password-toggle-btn" type="button">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-dark">Login Now</button>
+                                </div>
+                                <p class="mb-4 text-muted">Don't have an account? <a href="/signup">Create a new account
+                                        now.</a></p>
+                                <p class="text-center mt-3 small"><a href="#">Forget password? Click here</a></p>
+                            </form>
+        </div>
+    </div>
+</div>

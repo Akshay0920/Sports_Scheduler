@@ -1,0 +1,67 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>My Created Sessions</h1>
+        <p class="lead">Here is a list of all the active, upcoming sessions you have created.</p>
+    </div>
+    <a href="/sessions" class="btn btn-outline-secondary">View All Sessions</a>
+</div>
+<hr>
+
+<% if (typeof error !=='undefined' && error) { %>
+    <div class="alert alert-danger">
+        <%= error %>
+    </div>
+    <% } %>
+
+        <% if (sessions.length===0) { %>
+            <div class="alert alert-info">You haven't created any upcoming sessions yet.</div>
+            <% } else { %>
+                <div class="row">
+                    <%# This loop will now display your created sessions %>
+                        <% sessions.forEach(session=> { %>
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 shadow-sm session-card">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">
+                                            <%= session.Sport.name %>
+                                        </h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            <%= session.venue %>
+                                        </h6>
+                                        <p class="card-text">
+                                            <strong>Date:</strong>
+                                            <%= new Date(session.scheduled_at).toLocaleDateString('en-US', {
+                                                weekday: 'short' , month: 'short' , day: 'numeric' }) %><br>
+                                                <strong>Time:</strong>
+                                                <%= new Date(session.scheduled_at).toLocaleTimeString([],
+                                                    {hour: '2-digit' , minute:'2-digit'}) %><br>
+                                        </p>
+                                        <div class="mb-3">
+                                            <strong class="small">Who's In:</strong><br>
+                                            <% session.Participants.forEach(p=> { %>
+                                                <span class="avatar" title="<%= p.name %>">
+                                                    <%= p.name.split(' ').map(n => n[0]).join('').toUpperCase() %>
+                                </span>
+                            <% }) %>
+                        </div>
+                        <div class="mt-auto pt-3">
+                            <% const spotsLeft = session.players_needed - session.Participants.length; %>
+                            <% let badgeClass = ' bg-success'; if (spotsLeft <=session.players_needed / 2)
+                                                        badgeClass='bg-warning text-dark' ; if (spotsLeft <=2)
+                                                        badgeClass='bg-danger' ; %>
+                                                        <p class="mb-2">
+                                                            <span class="badge <%= badgeClass %>">
+                                                                <%= spotsLeft %> spot<%= spotsLeft !==1 ? 's' : '' %>
+                                                                        left
+                                                            </span>
+                                                        </p>
+                                                        <a href="/sessions/<%= session.id %>/cancel"
+                                                            class="btn btn-sm btn-outline-danger w-100">Cancel
+                                                            Session</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                </div>
+                <% } %>

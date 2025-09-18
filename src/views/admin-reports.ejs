@@ -1,0 +1,73 @@
+<div class="fade-in">
+    <h1>Session Reports</h1>
+    <p class="lead">Select a date range to view session statistics.</p>
+    <hr>
+
+    <div class="card bg-light mb-4">
+        <div class="card-body">
+            <form method="GET" action="/admin/reports">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="col-md">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">Generate Report</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <% if (typeof report !=='undefined' && report) { %>
+        <h2>Report Results</h2>
+        <p>Showing data from <strong>
+                <%= report.startDate %>
+            </strong> to <strong>
+                <%= report.endDate %>
+            </strong>.</p>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Sessions Played</h5>
+                <p class="card-text display-4">
+                    <%= report.total_sessions_played %>
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Sport Popularity</h5>
+                <% if (report.sport_popularity.length> 0) { %>
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Sport</th>
+                                <th>Number of Sessions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% report.sport_popularity.forEach(item=> { %>
+                                <tr>
+                                    <td>
+                                        <%= item.Sport.name %>
+                                    </td>
+                                    <td>
+                                        <%= item.session_count %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                    <% } else { %>
+                        <p class="mb-0">No sessions were played for any sport in this period.</p>
+                        <% } %>
+            </div>
+        </div>
+        <% } %>
+</div>

@@ -1,0 +1,89 @@
+<div class="fade-in">
+    <h1 class="mb-4">My Profile</h1>
+
+    <ul class="nav nav-tabs" id="profileTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details-pane"
+                type="button" role="tab">Profile Details</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-pane"
+                type="button" role="tab">Change Password</button>
+        </li>
+    </ul>
+
+    <div class="tab-content border border-top-0 p-4 rounded-bottom">
+        <div class="tab-pane fade show active" id="details-pane" role="tabpanel">
+            <h4>Your Details</h4>
+            <hr>
+            <% if (locals.details_error) { %>
+                <div class="alert alert-danger">
+                    <%= details_error %>
+                </div>
+                <% } %>
+                    <% if (locals.details_success) { %>
+                        <div class="alert alert-success">
+                            <%= details_success %>
+                        </div>
+                        <% } %>
+                            <form action="/profile/update" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" value="<%= user.email %>" disabled
+                                        readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="<%= user.name %>" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Details</button>
+                            </form>
+        </div>
+
+        <div class="tab-pane fade" id="password-pane" role="tabpanel">
+            <h4>Change Password</h4>
+            <hr>
+            <% if (locals.password_error) { %>
+                <div class="alert alert-danger">
+                    <%= password_error %>
+                </div>
+                <% } %>
+                    <% if (locals.password_success) { %>
+                        <div class="alert alert-success">
+                            <%= password_success %>
+                        </div>
+                        <% } %>
+                            <form action="/profile/change-password" method="POST" id="password-form">
+                                <div class="mb-3">
+                                    <label for="oldPassword" class="form-label">Old Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="oldPassword" name="oldPassword"
+                                            required>
+                                        <button class="btn btn-outline-secondary password-toggle-btn" type="button"><i
+                                                class="bi bi-eye"></i></button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newPassword" class="form-label">New Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword"
+                                            required>
+                                        <button class="btn btn-outline-secondary password-toggle-btn" type="button"><i
+                                                class="bi bi-eye"></i></button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="confirmPassword"
+                                            name="confirmPassword" required>
+                                        <button class="btn btn-outline-secondary password-toggle-btn" type="button"><i
+                                                class="bi bi-eye"></i></button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Password</button>
+                            </form>
+        </div>
+    </div>
+</div>

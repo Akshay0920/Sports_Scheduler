@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx sequelize-cli db:migrate --env production && node src/index.js",
+    "start": "npx --package sequelize-cli sequelize-cli db:migrate --env production && node src/index.js",
     "dev": "nodemon src/index.js",
     "build": "npm install"
   },

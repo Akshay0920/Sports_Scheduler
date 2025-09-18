@@ -27,11 +27,15 @@ You can view the live, deployed application here: **[Sport Scheduler](https://sp
 - **User Profile:** A tabbed profile page where users can update their name and change their password securely.
 - **Advanced Validation:** The system prevents users from joining sessions that conflict with their existing schedule.
 
+- ![Player Page Screenshot](Screenshots/player.png)
+
 ### Admin Features
 - **Admin Role:** Admins have all the capabilities of a regular player.
 - **Create Sports:** An admin-only page to add new sports to the platform.
 - **Admin Dashboard:** A dedicated menu in the navbar for admin-specific actions.
 - **View Reports:** A protected page where admins can generate reports on session counts and sport popularity within a selected date range.
+
+- ![Admin Page Screenshot](Screenshots/Admin.png)
 
 ---
 

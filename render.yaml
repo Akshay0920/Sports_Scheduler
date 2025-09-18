@@ -5,4 +5,4 @@ services:
     buildCommand: "npm run build"
     startCommand: "node src/index.js"
     postdeploy:
-      - "npx sequelize-cli db:migrate --env production"
+      - "node ./node_modules/sequelize-cli/lib/sequelize db:migrate --env production"

@@ -1,8 +1,7 @@
-// --- IMPORTS ---
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const { exec } = require('child_process'); // For programmatic migrations
+const { exec } = require('child_process');
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -10,11 +9,9 @@ const axios = require('axios');
 const isAuthenticated = require('./middleware/isAuthenticated');
 const isAdminView = require('./middleware/isAdminView');
 
-// --- APP INITIALIZATION ---
 const app = express();
-const PORT = process.env.PORT || 10000; // Use Render's default port
+const PORT = process.env.PORT || 10000;
 
-// --- IMPORT API ROUTES ---
 const authRoutes = require('./routes/auth.routes');
 const testRoutes = require('./routes/test.routes');
 const sportRoutes = require('./routes/sport.routes');
@@ -22,7 +19,6 @@ const sessionRoutes = require('./routes/session.routes');
 const reportRoutes = require('./routes/report.routes');
 const userRoutes = require('./routes/user.routes');
 
-// --- MIDDLEWARE SETUP ---
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -46,13 +42,11 @@ const redirectIfAuthenticated = (req, res, next) => {
     next();
 };
 
-// --- VIEW ENGINE SETUP ---
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.set('layout', 'layouts/layout');
 
-// --- API ROUTES ---
 app.use('/api/auth', authRoutes);
 app.use('/api/test', testRoutes);
 app.use('/api/sports', sportRoutes);
@@ -60,11 +54,13 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/users', userRoutes);
 
-// --- FRONTEND VIEW ROUTES ---
+// home route
 app.get('/', (req, res) => {
     if (req.session.user) { return res.redirect('/sessions'); }
     res.redirect('/login');
 });
+
+// sessions route
 app.get('/sessions', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -74,10 +70,13 @@ app.get('/sessions', isAuthenticated, async (req, res) => {
         res.render('sessions', { title: 'Available Sessions', sessions: [], error: 'Could not fetch sessions.' });
     }
 });
+
+// login route
 app.get('/login', redirectIfAuthenticated, (req, res) => {
     const successMessage = req.query.status === 'success' ? 'Signup successful! Please login.' : null;
     res.render('login', { title: 'Login', error: null, success: successMessage });
 });
+
 app.post('/login', redirectIfAuthenticated, async (req, res) => {
     try {
         const response = await axios.post(`http://localhost:${PORT}/api/auth/signin`, req.body);
@@ -88,6 +87,8 @@ app.post('/login', redirectIfAuthenticated, async (req, res) => {
         res.render('login', { title: 'Login', error: errorMessage, success: null });
     }
 });
+
+// signup route
 app.get('/signup', redirectIfAuthenticated, (req, res) => {
     res.render('signup', { title: 'Sign Up', error: null });
 });
@@ -100,9 +101,13 @@ app.post('/signup', redirectIfAuthenticated, async (req, res) => {
         res.render('signup', { title: 'Sign Up', error: errorMessage });
     }
 });
+
+// logout route
 app.get('/logout', (req, res) => {
     req.session.destroy(() => { res.redirect('/login'); });
 });
+
+// create session route
 app.get('/sessions/new', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sports`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -111,6 +116,8 @@ app.get('/sessions/new', isAuthenticated, async (req, res) => {
         res.redirect('/sessions');
     }
 });
+
+// create session route
 app.post('/sessions/new', isAuthenticated, async (req, res) => {
     try {
         await axios.post(`http://localhost:${PORT}/api/sessions`, req.body, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -121,6 +128,8 @@ app.post('/sessions/new', isAuthenticated, async (req, res) => {
         res.render('create-session', { title: 'Create Session', sports: sportsResponse.data, error: errorMessage });
     }
 });
+
+// cancel session view route
 app.get('/sessions/:id/cancel', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/${req.params.id}`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -130,6 +139,8 @@ app.get('/sessions/:id/cancel', isAuthenticated, async (req, res) => {
         res.redirect('/sessions');
     }
 });
+
+// cancel session route
 app.post('/sessions/:id/cancel', isAuthenticated, async (req, res) => {
     try {
         await axios.post(`http://localhost:${PORT}/api/sessions/${req.params.id}/cancel`, { reason: req.body.reason }, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -140,6 +151,8 @@ app.post('/sessions/:id/cancel', isAuthenticated, async (req, res) => {
         res.render('cancel-session', { title: 'Cancel Session', session: apiResponse.data, error: errorMessage });
     }
 });
+
+
 app.post('/sessions/:id/join', isAuthenticated, async (req, res) => {
     try {
         await axios.post(`http://localhost:${PORT}/api/sessions/${req.params.id}/join`, {}, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -149,6 +162,8 @@ app.post('/sessions/:id/join', isAuthenticated, async (req, res) => {
         res.redirect('/sessions');
     }
 });
+
+// joined sessions route
 app.get('/my-sessions', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/me/joined`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -158,6 +173,8 @@ app.get('/my-sessions', isAuthenticated, async (req, res) => {
         res.render('my-sessions', { title: 'My Sessions', sessions: [], error: 'Could not fetch your sessions.' });
     }
 });
+
+// created sessions route
 app.get('/my-created-sessions', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/me/created`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -166,6 +183,8 @@ app.get('/my-created-sessions', isAuthenticated, async (req, res) => {
         res.render('my-created-sessions', { title: 'My Created Sessions', sessions: [], error: 'Could not fetch your created sessions.' });
     }
 });
+
+// Admin routes
 app.get('/admin/create-sport', isAuthenticated, isAdminView, (req, res) => {
     res.render('create-sport', { title: 'Create Sport' });
 });
@@ -193,9 +212,12 @@ app.get('/admin/reports', isAuthenticated, isAdminView, async (req, res) => {
     }
     res.render('admin-reports', { title: 'Admin Reports', report: reportData });
 });
+
+// Profile routes
 app.get('/profile', isAuthenticated, (req, res) => {
     res.render('profile', { title: 'My Profile' });
 });
+
 app.post('/profile/update', isAuthenticated, async (req, res) => {
     try {
         await axios.patch(`http://localhost:${PORT}/api/users/me`, { name: req.body.name }, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -222,7 +244,7 @@ app.post('/profile/change-password', isAuthenticated, async (req, res) => {
     }
 });
 
-// --- SERVER LISTENER & MIGRATION SCRIPT ---
+// server listen
 const startServer = () => {
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);

@@ -12,7 +12,7 @@ const isAdminView = require('./middleware/isAdminView');
 
 // --- APP INITIALIZATION ---
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // Use Render's default port
 
 // --- IMPORT API ROUTES ---
 const authRoutes = require('./routes/auth.routes');
@@ -61,12 +61,10 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/users', userRoutes);
 
 // --- FRONTEND VIEW ROUTES ---
-
 app.get('/', (req, res) => {
     if (req.session.user) { return res.redirect('/sessions'); }
     res.redirect('/login');
 });
-
 app.get('/sessions', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -225,6 +223,26 @@ app.post('/profile/change-password', isAuthenticated, async (req, res) => {
 });
 
 // --- SERVER LISTENER & MIGRATION SCRIPT ---
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+const startServer = () => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+};
+
+if (process.env.NODE_ENV === 'production') {
+    console.log('Running migrations...');
+    exec('npx sequelize-cli db:migrate --env production', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Migration Error: ${error.message}`);
+            process.exit(1);
+        }
+        if (stderr) {
+            console.error(`Migration Stderr: ${stderr}`);
+        }
+        console.log(`Migration Stdout: ${stdout}`);
+        console.log('Migrations finished. Starting server...');
+        startServer();
+    });
+} else {
+    startServer();
+}

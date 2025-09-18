@@ -20,7 +20,8 @@
       "ssl": {
         "require": true,
         "rejectUnauthorized": false
-      }
+      },
+      "search_path": "public"
     }
   }
 }

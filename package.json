@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "build": "npm install",
-    "migrate": "sequelize-cli db:migrate --env production",
-    "start": "npm run migrate && node src/index.js"
-  },
+"scripts": {
+  "build": "npm install && npm run migrate",
+  "migrate": "node ./node_modules/sequelize-cli/lib/sequelize db:migrate --env production",
+  "start": "node src/index.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",

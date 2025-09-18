@@ -50,7 +50,7 @@ Follow these steps to run the project locally.
 
 1.  **Clone the repository:**
     ```bash
-    git clone [Your-GitHub-Repo-Link-Goes-Here]
+    git clone https://github.com/Akshay0920/Sports_Scheduler
     cd sports-scheduler
     ```
 

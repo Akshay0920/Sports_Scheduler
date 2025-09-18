@@ -231,7 +231,8 @@ const startServer = () => {
 
 if (process.env.NODE_ENV === 'production') {
     console.log('Running migrations...');
-    exec('npx sequelize-cli db:migrate --env production', (error, stdout, stderr) => {
+    exec('node ./node_modules/sequelize-cli/lib/sequelize db:migrate --env production', (error, stdout, stderr) => {
+
         if (error) {
             console.error(`Migration Error: ${error.message}`);
             process.exit(1);

@@ -1,3 +1,6 @@
+// src/index.js
+
+// --- IMPORTS ---
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
@@ -8,9 +11,11 @@ const axios = require('axios');
 const isAuthenticated = require('./middleware/isAuthenticated');
 const isAdminView = require('./middleware/isAdminView');
 
+// --- APP INITIALIZATION ---
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// --- IMPORT API ROUTES ---
 const authRoutes = require('./routes/auth.routes');
 const testRoutes = require('./routes/test.routes');
 const sportRoutes = require('./routes/sport.routes');
@@ -18,6 +23,7 @@ const sessionRoutes = require('./routes/session.routes');
 const reportRoutes = require('./routes/report.routes');
 const userRoutes = require('./routes/user.routes');
 
+// --- MIDDLEWARE SETUP ---
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -41,13 +47,13 @@ const redirectIfAuthenticated = (req, res, next) => {
     next();
 };
 
-
+// --- VIEW ENGINE SETUP ---
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.set('layout', 'layouts/layout');
 
-
+// --- API ROUTES ---
 app.use('/api/auth', authRoutes);
 app.use('/api/test', testRoutes);
 app.use('/api/sports', sportRoutes);
@@ -55,14 +61,13 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/users', userRoutes);
 
+// --- FRONTEND VIEW ROUTES ---
 
-// Home route
 app.get('/', (req, res) => {
     if (req.session.user) { return res.redirect('/sessions'); }
     res.redirect('/login');
 });
 
-// Available sessions
 app.get('/sessions', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -73,7 +78,7 @@ app.get('/sessions', isAuthenticated, async (req, res) => {
     }
 });
 
-//Login route
+// LOGIN, SIGNUP, LOGOUT ROUTES
 app.get('/login', redirectIfAuthenticated, (req, res) => {
     const successMessage = req.query.status === 'success' ? 'Signup successful! Please login.' : null;
     res.render('login', { title: 'Login', error: null, success: successMessage });
@@ -88,8 +93,6 @@ app.post('/login', redirectIfAuthenticated, async (req, res) => {
         res.render('login', { title: 'Login', error: errorMessage, success: null });
     }
 });
-
-//Signup route
 app.get('/signup', redirectIfAuthenticated, (req, res) => {
     res.render('signup', { title: 'Sign Up', error: null });
 });
@@ -102,13 +105,11 @@ app.post('/signup', redirectIfAuthenticated, async (req, res) => {
         res.render('signup', { title: 'Sign Up', error: errorMessage });
     }
 });
-
-// Logout route
 app.get('/logout', (req, res) => {
     req.session.destroy(() => { res.redirect('/login'); });
 });
 
-// Show create session form 
+// SESSION MANAGEMENT ROUTES
 app.get('/sessions/new', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sports`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -117,8 +118,6 @@ app.get('/sessions/new', isAuthenticated, async (req, res) => {
         res.redirect('/sessions');
     }
 });
-
-// Handle create session form submission
 app.post('/sessions/new', isAuthenticated, async (req, res) => {
     try {
         await axios.post(`http://localhost:${PORT}/api/sessions`, req.body, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -129,8 +128,6 @@ app.post('/sessions/new', isAuthenticated, async (req, res) => {
         res.render('create-session', { title: 'Create Session', sports: sportsResponse.data, error: errorMessage });
     }
 });
-
-// Cancel session route
 app.get('/sessions/:id/cancel', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/${req.params.id}`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -140,8 +137,6 @@ app.get('/sessions/:id/cancel', isAuthenticated, async (req, res) => {
         res.redirect('/sessions');
     }
 });
-
-// Handle cancel session form submission
 app.post('/sessions/:id/cancel', isAuthenticated, async (req, res) => {
     try {
         await axios.post(`http://localhost:${PORT}/api/sessions/${req.params.id}/cancel`, { reason: req.body.reason }, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -152,8 +147,6 @@ app.post('/sessions/:id/cancel', isAuthenticated, async (req, res) => {
         res.render('cancel-session', { title: 'Cancel Session', session: apiResponse.data, error: errorMessage });
     }
 });
-
-// Join session route
 app.post('/sessions/:id/join', isAuthenticated, async (req, res) => {
     try {
         await axios.post(`http://localhost:${PORT}/api/sessions/${req.params.id}/join`, {}, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -164,7 +157,7 @@ app.post('/sessions/:id/join', isAuthenticated, async (req, res) => {
     }
 });
 
-// User profile and management route
+// USER-SPECIFIC SESSION ROUTES
 app.get('/my-sessions', isAuthenticated, async (req, res) => {
     try {
         const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/me/joined`, { headers: { 'x-access-token': req.session.user.accessToken } });
@@ -174,8 +167,16 @@ app.get('/my-sessions', isAuthenticated, async (req, res) => {
         res.render('my-sessions', { title: 'My Sessions', sessions: [], error: 'Could not fetch your sessions.' });
     }
 });
+app.get('/my-created-sessions', isAuthenticated, async (req, res) => {
+    try {
+        const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/me/created`, { headers: { 'x-access-token': req.session.user.accessToken } });
+        res.render('my-created-sessions', { title: 'My Created Sessions', sessions: apiResponse.data });
+    } catch (error) {
+        res.render('my-created-sessions', { title: 'My Created Sessions', sessions: [], error: 'Could not fetch your created sessions.' });
+    }
+});
 
-// Admin routes
+// ADMIN VIEW ROUTES
 app.get('/admin/create-sport', isAuthenticated, isAdminView, (req, res) => {
     res.render('create-sport', { title: 'Create Sport' });
 });
@@ -188,8 +189,6 @@ app.post('/admin/create-sport', isAuthenticated, isAdminView, async (req, res) =
         res.render('create-sport', { title: 'Create Sport', error: errorMessage });
     }
 });
-
-// Admin reports route
 app.get('/admin/reports', isAuthenticated, isAdminView, async (req, res) => {
     let reportData = null;
     if (req.query.startDate && req.query.endDate) {
@@ -206,21 +205,9 @@ app.get('/admin/reports', isAuthenticated, isAdminView, async (req, res) => {
     res.render('admin-reports', { title: 'Admin Reports', report: reportData });
 });
 
-app.get('/admin/reports', isAuthenticated, isAdminView, async (req, res) => {
+// <-- DUPLICATED AND EMPTY /admin/reports ROUTE REMOVED FROM HERE -->
 
-});
-
-// User profile and management routes
-app.get('/my-created-sessions', isAuthenticated, async (req, res) => {
-    try {
-        const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/me/created`, { headers: { 'x-access-token': req.session.user.accessToken } });
-        res.render('my-created-sessions', { title: 'My Created Sessions', sessions: apiResponse.data });
-    } catch (error) {
-        res.render('my-created-sessions', { title: 'My Created Sessions', sessions: [], error: 'Could not fetch your created sessions.' });
-    }
-});
-
-// Profile routes
+// PROFILE ROUTES
 app.get('/profile', isAuthenticated, (req, res) => {
     res.render('profile', { title: 'My Profile' });
 });
@@ -233,62 +220,24 @@ app.post('/profile/update', isAuthenticated, async (req, res) => {
         res.render('profile', { title: 'My Profile', details_error: 'Could not update profile.' });
     }
 });
-
-// Change password route
 app.post('/profile/change-password', isAuthenticated, async (req, res) => {
     const { oldPassword, newPassword, confirmPassword } = req.body;
-
     if (oldPassword === newPassword) {
-        return res.render('profile', {
-            title: 'My Profile',
-            password_error: 'New password cannot be the same as the old password.'
-        });
+        return res.render('profile', { title: 'My Profile', password_error: 'New password cannot be the same as the old password.' });
     }
-
     if (newPassword !== confirmPassword) {
-        return res.render('profile', {
-            title: 'My Profile',
-            password_error: 'New passwords do not match.'
-        });
+        return res.render('profile', { title: 'My Profile', password_error: 'New passwords do not match.' });
     }
     try {
-        await axios.patch(`http://localhost:${PORT}/api/users/me/password`,
-            { oldPassword, newPassword },
-            { headers: { 'x-access-token': req.session.user.accessToken } }
-        );
-        res.render('profile', {
-            title: 'My Profile',
-            password_success: 'Password updated successfully!'
-        });
+        await axios.patch(`http://localhost:${PORT}/api/users/me/password`, { oldPassword, newPassword }, { headers: { 'x-access-token': req.session.user.accessToken } });
+        res.render('profile', { title: 'My Profile', password_success: 'Password updated successfully!' });
     } catch (error) {
         const errorMessage = error.response ? error.response.data.message : 'Could not change password.';
-        res.render('profile', {
-            title: 'My Profile',
-            password_error: errorMessage
-        });
+        res.render('profile', { title: 'My Profile', password_error: errorMessage });
     }
 });
 
-// My created sessions route
-app.get('/my-created-sessions', isAuthenticated, async (req, res) => {
-    try {
-        const apiResponse = await axios.get(`http://localhost:${PORT}/api/sessions/me/created`, {
-            headers: { 'x-access-token': req.session.user.accessToken }
-        });
-        res.render('my-created-sessions', {
-            title: 'My Created Sessions',
-            sessions: apiResponse.data
-        });
-    } catch (error) {
-        res.render('my-created-sessions', {
-            title: 'My Created Sessions',
-            sessions: [],
-            error: 'Could not fetch your created sessions.'
-        });
-    }
-});
-
-// Start the server
+// --- SERVER LISTENER ---
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

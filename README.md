@@ -4,7 +4,7 @@ This is a full-stack web application built as a capstone project. It allows user
 
 ## Live Demo
 
-You can view the live, deployed application here: **[Sport Scheduler - Live Demo](https://sport-scheduler-app.onrender.com)**
+You can view the live, deployed application here: **[Sport Scheduler](https://sport-scheduler-app.onrender.com)**
 ---
 
 ---

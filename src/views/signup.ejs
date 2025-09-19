@@ -13,7 +13,7 @@
     <div class="auth-form-panel">
         <div class="auth-form-container">
             <h2>Create Your Account</h2>
-            <p class="mb-4 text-muted">Already have an account? <a href="/login">Login here.</a></p>
+            
             <% if (locals.error) { %>
                 <div class="alert alert-danger">
                     <%= error %>
@@ -40,6 +40,7 @@
                         </div>
                         <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-dark">Sign Up Now</button>
+                             <p class="mb-4 text-muted">Already have an account? <a href="/login">Login here.</a></p>
                         </div>
                     </form>
         </div>

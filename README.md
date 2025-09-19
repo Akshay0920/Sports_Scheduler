@@ -2,9 +2,10 @@
 
 This is a full-stack web application built as a capstone project. It allows users to sign up, create, and join sports sessions, with separate roles and permissions for regular players and administrators.
 
-## Live Demo
+## Live Demo & Walkthrough
 
 You can view the live, deployed application here: **[Sport Scheduler](https://sport-scheduler-app.onrender.com)**
+* **Video Walkthrough:** **[Youtube Video](https://www.youtube.com/watch?v=JjKxFTczcBg)**
 ---
 
 ---
